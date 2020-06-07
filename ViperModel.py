@@ -142,8 +142,8 @@ with open('ViperInstructionTbl.txt', 'wt') as fout:
                             if ((j == 0) and (k == 0)) or \
                                ((j == 1) and (k == 1) and (l != 2)) or \
                                ((j == 2) and (k == 2) and (l != 3)) or \
-                               ((j == 4) and (k == 3) and (l != 0)) or \
-                               ((j == 5) and (k == 3) and (l != 0)) or \
+                               ((j == 4) and (k == 3)             ) or \
+                               ((j == 5) and (k == 3)             ) or \
                                ((j == 6) and (l != 0) and \
                                 ((k == 0) or \
                                  ((k == 1) and (l != 2)) or \
@@ -154,19 +154,19 @@ with open('ViperInstructionTbl.txt', 'wt') as fout:
                                  ((k == 2) and (l != 3)) ) ): err = False
                             else: err = True
                         elif (i == 1):  # Y <= P + 1, P <= M (JSR)
-                            if ((j == 0) and (k == 0) and (l != 0)): err = False
+                            if ((j == 3) and (k == 3)): err = False
                             else: err = True
-                        elif (i == 2):  #IOR
+                        elif (i == 2):  #GET
                             if (  (l != 0) and \
                                 (((j == 1) and (k == 1) and (l != 2)) or \
                                  ((j == 2) and (k == 2) and (l != 3)) or \
                                  ((j == 0) and (k == 0)) ) ): err = False
                             else: err = True
-                        elif (i == 3):  #LDM
+                        elif (i == 3):  #LDA
                             if ((j == 0) and (k == 0)) or \
                                ((j == 1) and (k == 1) and (l != 2)) or \
                                ((j == 2) and (k == 2) and (l != 3)) or \
-                               ((j == 3) and (k == 3) and (l != 0)): err = False
+                               ((j == 3) and (k == 3)             ): err = False
                             else: err = True
                         elif (i == 4):  # D <= R + M, B <= Co
                             if (j == 0):
@@ -398,22 +398,26 @@ with open('ViperInstructionSet.txt', 'wt') as fout:
                                             (opcode, reg, adrMode), \
                           file = fout)
                 elif DF == 4:
-                    if MF == 0: adrMode = '#imm'
+                    opcode = 'JBS'
+
+                    if MF == 0:
+                        adrMode = 'rel'
+                        opcode = 'BBS'
                     elif MF == 1: adrMode = 'abs'
                     elif MF == 2: adrMode = 'abs+X'
                     else: adrMode = 'abs+Y'
-
-                    opcode = 'JB '
 
                     print(hexCode, binCode, '%-6s%-s' % (opcode, adrMode), \
                           file = fout)
                 elif DF == 5:
-                    if MF == 0: adrMode = '#imm'
+                    opcode = 'JBC'
+
+                    if MF == 0:
+                        adrMode = 'rel'
+                        opcode = 'BBC'
                     elif MF == 1: adrMode = 'abs'
                     elif MF == 2: adrMode = 'abs+X'
                     else: adrMode = 'abs+Y'
-
-                    opcode = 'JNB'
 
                     print(hexCode, binCode, '%-6s%-s' % (opcode, adrMode), \
                           file = fout)
@@ -450,13 +454,15 @@ with open('ViperInstructionSet.txt', 'wt') as fout:
                           file = fout)
                 else: print(hexCode, binCode, 'Unhandled instruction *********')
             elif FF == 1:
-                    if MF == 0: adrMode = '#imm'
+                    opcode = 'JSR'
+                    
+                    if MF == 0:
+                        adrMode = 'rel'
+                        opcode = 'BSR'
                     elif MF == 1: adrMode = 'abs'
                     elif MF == 2: adrMode = 'abs+X'
                     else: adrMode = 'abs+Y'
 
-                    opcode = 'JSR'
-                    
                     print(hexCode, binCode, '%-6s%-s' % (opcode, adrMode), \
                           file = fout)
             elif FF == 2:
@@ -488,6 +494,9 @@ with open('ViperInstructionSet.txt', 'wt') as fout:
 
                     if RF == 3:
                         opcode = 'JMP'
+                        if MF == 0:
+                            adrMode = 'rel'
+                            opcode = 'BRA'
                         print(hexCode, binCode, '%-6s%-s' % \
                                                 (opcode, adrMode), \
                               file = fout)
